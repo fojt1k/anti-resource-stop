@@ -1,4 +1,3 @@
-
 local function getClientResources()
     local resources = {}
     local resourceCount = GetNumResources()

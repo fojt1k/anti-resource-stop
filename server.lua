@@ -1,6 +1,11 @@
-
 local clientResources = {}
 local expectedResources = {}
+
+local function hasClientSide(resourceName)
+    local clientScript = GetResourceMetadata(resourceName, "client_script", 0)
+    local sharedScript = GetResourceMetadata(resourceName, "shared_script", 0)
+    return clientScript ~= nil or sharedScript ~= nil
+end
 
 local function updateExpectedResources()
     expectedResources = {}
@@ -8,7 +13,9 @@ local function updateExpectedResources()
     for i = 0, resourceCount - 1 do
         local resourceName = GetResourceByFindIndex(i)
         if resourceName and GetResourceState(resourceName) == "started" then
-            expectedResources[resourceName] = true
+            if hasClientSide(resourceName) then
+                expectedResources[resourceName] = true
+            end
         end
     end
 end
