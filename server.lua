@@ -12,10 +12,8 @@ local function updateExpectedResources()
     local resourceCount = GetNumResources()
     for i = 0, resourceCount - 1 do
         local resourceName = GetResourceByFindIndex(i)
-        if resourceName and GetResourceState(resourceName) == "started" then
-            if hasClientSide(resourceName) then
-                expectedResources[resourceName] = true
-            end
+        if resourceName and GetResourceState(resourceName) == "started" and hasClientSide(resourceName) then
+            expectedResources[resourceName] = true
         end
     end
 end
@@ -31,13 +29,21 @@ end)
 RegisterNetEvent("antiResourceStop:reportResources")
 AddEventHandler("antiResourceStop:reportResources", function(clientResourceList)
     local src = source
-    clientResources[src] = clientResourceList
+    if not src then return end
     
+    clientResources[src] = clientResourceList or {}
+    
+    local missingResources = {}
     for resourceName, _ in pairs(expectedResources) do
-        if not clientResourceList[resourceName] then
-            print("Hráč " .. src .. " má zastavený resource: " .. resourceName)
-            -- DropPlayer(src, "Detekováno zastavení resource: " .. resourceName)
+        if not clientResources[src][resourceName] then
+            table.insert(missingResources, resourceName)
         end
+    end
+    
+    if #missingResources > 0 then
+        local missingList = table.concat(missingResources, ", ")
+        print("Hráč " .. src .. " má zastavené resource: " .. missingList)
+        -- DropPlayer(src, "Detekováno zastavení resource: " .. missingList)
     end
 end)
 
