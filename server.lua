@@ -43,7 +43,7 @@ AddEventHandler("antiResourceStop:reportResources", function(clientResourceList)
     if #missingResources > 0 then
         local missingList = table.concat(missingResources, ", ")
         print("Hráč " .. src .. " má zastavené resource: " .. missingList)
-        -- DropPlayer(src, "Detekováno zastavení resource: " .. missingList)
+        -- DropPlayer(src, "Resource Stopped: " .. missingList)
     end
 end)
 
